@@ -25,6 +25,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
+    "file-loader": "^0.11.2",
     "morgan": "^1.8.2",
     "webpack": "^3.3.0",
     "webpack-livereload-plugin": "^0.11.0"
