@@ -7,7 +7,7 @@ function importAll (r) {
   });
 }
 
-importAll(require.context('./tones/', true, /\.ogg$/));
+importAll(require.context('./tones/', false, /\.ogg$/));
 
 export default cache;
 
