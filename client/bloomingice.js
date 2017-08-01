@@ -7,12 +7,35 @@ window.onload = () => {
   const canvas = document.getElementById('myCanvas');
   paper.setup(canvas);
   console.log('paper', paper);
+  console.log('tones', tones);
+
+  const tone1 = new Audio(tones['1ogg'])
+  console.log('tone1',tone1);
+
+  const canvasNode = document.getElementsByTagName('head')[0];
+  canvasNode.appendChild(tone1)
+
+  function playTone() {
+    const audioNode = document.querySelector('audio');
+    return document.querySelector('audio').play()
+  }
+  playTone()
+    .then(()=> {
+      console.log("it's playing");
+    })
+    .catch((error) => {
+      throw new Error(error);
+    })
 
   const canvasWidth = paper.view.size.width;
   const canvasHeight = paper.view.size.height;
 
   ////// base with animated gradient/////
   const basePos = [];
+  const NumOfChords = 30;
+  const NumOfRows = 3;
+  const NumOfCols = 10;
+
   const path = new paper.Path.Circle(
     new paper.Point(Math.random() * canvasWidth, Math.random() * canvasHeight), 30
   );

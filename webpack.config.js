@@ -35,8 +35,8 @@ module.exports = {
         loader: 'babel-loader!svg-react-loader'
       },
       {
-        test: /\.(ogg|mp3|wav|mpe?g)$/i,
-        use: 'file-loader'
+        test: /\.(ogg|mp3|wav|mpe?g)$/,
+        use: 'url-loader'
       }
     ]
   },
