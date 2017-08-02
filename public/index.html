@@ -7,20 +7,29 @@
 
 <body style="background-color: rgba(224, 229, 231, 0.4)">
 	<!-- <script type="text/javascript" src="./public/bundle.js" charset="utf-8" defer></script> -->
-	<canvas id="myCanvas" resize="true" width="1300" height="700" style=" background-color: white; justify-content: center"></canvas>
-	<h2 style="position: absolute; color: rgb(173, 169, 175); font-family: Georgia">BLOOMING ICE</h2>
+	<h2 style="z-index: 1000; display: inline; position: absolute; color: rgb(173, 169, 175); font-family: Georgia">BLOOMING ICE</h2>
+	<canvas id="myCanvas" resize="true" style=" background-color: white; justify-content: center; position absolute"></canvas>
 </body>
 
 <style>
 body {
-	display: flex;
+	display: inline-flex;
 	flexDirection: 'row';
 	box-sizing: border-box;
 	flex: 1;
 	justify-content: center;
+	text-align: center;
 	margin-top: 50px;
 	margin-bottom: 100px;
-	width: 100%;
+	width: 100vw;
+	height: 100vh;
+}
+canvas {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	justify-content: center;
 }
 </style>
 

@@ -1,40 +1,65 @@
 /*eslint-disable*/
 
 import paper from 'paper';
-import tones from '../public/music'
+import tones from '../public/music';
+import { playTone, makeAudioEls, numOfCols, getCell } from './utils';
 
 window.onload = () => {
+
+  ////// setup canvas with paper /////
   const canvas = document.getElementById('myCanvas');
   paper.setup(canvas);
-  console.log('paper', paper);
-  console.log('tones', tones);
 
-  const tone1 = new Audio(tones['1ogg'])
-  console.log('tone1',tone1);
-
-  const canvasNode = document.getElementsByTagName('head')[0];
-  canvasNode.appendChild(tone1)
-
-  function playTone() {
-    const audioNode = document.querySelector('audio');
-    return document.querySelector('audio').play()
+  ////// change canvas size when window is resized/////
+  const resizeCanvas = window.onresize = (event) => {
+    canvas.width = (window.innerWidth * .9);
+    canvas.height = (window.innerHeight * .9);
   }
-  playTone()
-    .then(()=> {
-      console.log("it's playing");
-    })
-    .catch((error) => {
-      throw new Error(error);
-    })
+  resizeCanvas();
 
-  const canvasWidth = paper.view.size.width;
-  const canvasHeight = paper.view.size.height;
+  let canvasWidth = canvas.width;
+  let canvasHeight = canvas.height;
+  paper.view.onResize = (event) => {
+    canvasWidth = canvas.width;
+    canvasHeight = canvas.height;
+  }
 
-  ////// base with animated gradient/////
-  const basePos = [];
-  const NumOfChords = 30;
-  const NumOfRows = 3;
-  const NumOfCols = 10;
+  ////// get array of tones as html audio elements/////
+  const tonesArray = makeAudioEls();
+
+  ////// experimenting with playing audio //////
+
+  // play all tones in sequence:
+  function playSequence(start) {
+    let i = start;
+
+    (function playAllTones() {
+      if (i < 33) {
+        tonesArray[i - 1].onended = playAllTones
+
+        return function(j) {
+          i++;
+          console.log(`play ${j}`);
+          playTone(`${j}ogg`);
+        }(i)
+      }
+    }())
+  }
+  // playSequence(1);
+
+  // play a tone on repeat:
+  function playRepeat(id) {
+    const indexOfTone = id.slice(0, -3) - 1;
+    tonesArray[indexOfTone].loop = true;
+    (function playAllTones() {
+          console.log('play', id);
+          playTone(id);
+    }())
+  }
+  // playRepeat('30ogg')
+
+  ////// nodes with animated gradient /////
+  const nodePositions = [];
 
   const path = new paper.Path.Circle(
     new paper.Point(Math.random() * canvasWidth, Math.random() * canvasHeight), 30
@@ -42,7 +67,7 @@ window.onload = () => {
 
   path.fillColor = {
     gradient: {
-      stops: [['red', 0.05], ['pink', 0.7], ['rgb(112, 69, 69)', 1], ['white', 1]],
+      stops: [['red', 0.05], ['pink', 0.7], ['rgb(112, 69, 69)', 1], ['rgba(250, 250, 250, 0)', 1]],
       radial: true
     },
     origin: path.position,
@@ -52,15 +77,27 @@ window.onload = () => {
   const pathS = new paper.SymbolDefinition(path);
   path.remove();
 
-  for (var i = 0; i < 6; i++) {
+  for (let i = 0; i < 3; i++) {
     const position = (new paper.Point(Math.random() * canvasWidth, Math.random() * canvasHeight));
     const pathI = pathS.place(position);
-    basePos.push(pathI.position)
+    nodePositions.push(pathI.position)
   }
-  console.log(basePos)
 
+  ////// play tones of cells /////
+  let cells = nodePositions.map(nodePos => {
+    return getCell(nodePos, canvasWidth, canvasHeight)
+  })
+  cells.forEach(cell => {
+    // playRepeat(`${cell.y * numOfCols + cell.x + 1}ogg`)
+  })
+  // let cell = getCell(nodePositions[0], canvasWidth, canvasHeight)
+  // console.log(cell);
+  // const toneId = `${cell.y * numOfCols + cell.x + 1}ogg`;
+  // console.log(toneId);
+  // playTone(toneId);
 
-  // This function is called each frame of the animation:
+  ////// main animation //////
+  ////// This function is called each frame of the animation: //////
   paper.view.onFrame = (event) => {
     var whiteStop = gradient.stops[2];
     // Animate the offset between 0.7 and 0.9:
