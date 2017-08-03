@@ -18,6 +18,12 @@ const playTone = (id) => {
   })
 }
 
+const stopTones = () => {
+  const sounds = document.getElementsByTagName('audio');
+  for(let i=0; i<sounds.length; i++) sounds[i].pause();
+  console.log('all tones stop');
+}
+
 ////// helper function to sort strings by number //////
 function _sortByDigits(array) {
   var re = /\D/g;
@@ -60,6 +66,7 @@ const getCell = (node, viewWidth, viewHeight) => {
 module.exports = {
   numOfCols,
   playTone,
+  stopTones,
   makeAudioEls,
   getCell
 }
