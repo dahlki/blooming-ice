@@ -4,8 +4,9 @@
   "description": "an experiment using paper.js",
   "main": "bloomingice.js",
   "scripts": {
-    "build": "webpack",
+    "postinstall": "webpack",
     "build-dev": "npm run build -- -w & npm start",
+    "build": "webpack",
     "start": "nodemon server/app.js -e .html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
