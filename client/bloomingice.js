@@ -2,7 +2,7 @@ import paper from 'paper';
 import tones from '../public/music';
 import { playTone, stopTones, makeAudioEls, numOfCols, getCell, playRepeat, setIntervalOnNode, radialLines, startMusic, getStart } from './utils';
 
-window.onload = () => {
+// window.onload = () => {
 
   ////// setup canvas with paper /////
   const canvas = document.getElementById('myCanvas');
@@ -10,22 +10,13 @@ window.onload = () => {
 
   let canvasWidth;
   let canvasHeight;
-  console.log(paper.view.size, canvas);
 
-  //// change canvas size when window is resized /////
-  // const resizeCanvas = window.onresize = (event) => {
-  //   canvasWidth = paper.view.size.width = canvas.width = (window.innerWidth * .9);
-  //   canvasHeight = paper.view.size.height = canvas.height = (window.innerHeight * .9);
-  //   console.log(paper.view.size, canvas);
-  // }
-  // resizeCanvas();
-  canvasWidth = paper.view.size.width = canvas.width = (window.innerWidth * .9);
-  canvasHeight = paper.view.size.height = canvas.height = (window.innerHeight * .9);
-
-  paper.view.onResize = (event) => {
-    canvasWidth = paper.view.size.width = canvas.width = (window.innerWidth * .9);
-    canvasHeight = paper.view.size.height = canvas.height = (window.innerHeight * .9);
+  const adjustViewSize = (event) => {
+    canvasWidth = paper.view.viewSize.width = canvas.width = (window.innerWidth * .9);
+    canvasHeight = paper.view.viewSize.height = canvas.height = (window.innerHeight * .9);
   }
+  adjustViewSize();
+  paper.view.onResize = adjustViewSize;
 
   ////// create nodes with animated gradient /////
   const nodePositions = [];
@@ -68,7 +59,6 @@ window.onload = () => {
   }
 
   mouse.onMouseDown = (event) => {
-    console.log(event.point);
     hitResult = paper.project.hitTest(event.point, hitOptions);
     if (!hitResult) return;
     if (hitResult.type === "fill") {
@@ -138,4 +128,4 @@ window.onload = () => {
     const pinkStop = gradient.stops[1];
     pinkStop.offset = Math.sin(event.time * 3) * 0.1 + 0.3;
   }
-}
+// }
