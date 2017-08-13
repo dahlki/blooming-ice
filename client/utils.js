@@ -1,8 +1,10 @@
+import paper from 'paper';
 import tones from '../public/music';
 
 const numOfChords = 30;
 const numOfRows = 4;
 const numOfCols = 8;
+let start = false;
 
 ////// find audio element by id and play tone //////
 const playTone = (id) => {
@@ -21,12 +23,11 @@ const playTone = (id) => {
 const stopTones = () => {
   const sounds = document.getElementsByTagName('audio');
   for(let i=0; i<sounds.length; i++) sounds[i].pause();
-  console.log('all tones stop');
 }
 
 ////// helper function to sort strings by number //////
 function _sortByDigits(array) {
-  var re = /\D/g;
+  let re = /\D/g;
 
   array.sort(function(a, b) {
     return(parseInt(a.replace(re, ""), 10) - parseInt(b.replace(re, ""), 10));
@@ -45,9 +46,11 @@ const makeAudioEls = () => {
   );
   const canvasNode = document.getElementsByTagName('canvas')[0];
   tonesAudio.forEach(tone => canvasNode.appendChild(tone));
-  console.log(tonesAudio);
   return tonesAudio;
 }
+
+////// get array of tones as html audio elements/////
+const tonesArray = makeAudioEls();
 
 ////// get location of node on canvas 'grid' //////
 const getCell = (node, viewWidth, viewHeight) => {
@@ -63,11 +66,99 @@ const getCell = (node, viewWidth, viewHeight) => {
   }
 }
 
+// play all tones in sequence:
+function playSequence(start) {
+  let i = start;
+
+  (function playAllTones() {
+    if (i < 33) {
+      tonesArray[i - 1].onended = playAllTones
+
+      return function(j) {
+        i++;
+        console.log(`play ${j}`);
+        playTone(`${j}ogg`);
+      }(i)
+    }
+  }())
+}
+
+// play a tone on repeat:
+function playRepeat(id) {
+  const indexOfTone = id.slice(0, -3) - 1;
+  tonesArray[indexOfTone].loop = true;
+  (function playAllTones() {
+    if (start) playTone(id);
+  }())
+}
+
+////// get random color //////
+const getRandomColor = () => {
+  const R = Math.random();
+  const G = Math.random();
+  const B  =Math.random();
+  const A = Math.random();
+  return new paper.Color(R,G,B,A);
+}
+
+////// interval function //////
+function setIntervalOnNode(cb, delay, repetitionsOfCb, node) {
+  let x = 0;
+  start = true;
+  const intervalFn = window.setInterval(() => {
+
+    cb(node);
+
+    if (++x === repetitionsOfCb) {
+      window.clearInterval(intervalFn);
+      start = false;
+      stopTones();
+    }
+  }, delay);
+}
+
+function radialLines(nodePosition) {
+  const angle = Math.random()* Math.PI * 2;
+  const cosAngle = Math.cos(angle);
+  const sinAngle = Math.sin(angle)
+
+  function getStartPoint(center, radius) {
+    return {
+      x: center.x - cosAngle * (radius + 10),
+      y: center.y - sinAngle * (radius + 10)
+    };
+  }
+
+  function getEndPoint(start, length) {
+    return {
+      x: start.x - cosAngle * length,
+      y: start.y - sinAngle * length
+    }
+  }
+  const startPos = getStartPoint(nodePosition, 30)
+  const endPos = getEndPoint(startPos, 20)
+  const startPoint = new paper.Point(startPos.x, startPos.y)
+  const endPoint = new paper.Point(endPos.x, endPos.y)
+  const line = new paper.Path.Line(startPoint, endPoint);
+  return line.strokeColor = getRandomColor();
+}
+
+function startMusic() {
+  start = true;
+}
+function getStart() {
+  return start;
+}
+
 module.exports = {
   numOfCols,
   playTone,
   stopTones,
   makeAudioEls,
-  getCell
+  getCell,
+  playRepeat,
+  setIntervalOnNode,
+  radialLines,
+  startMusic,
+  getStart
 }
-
