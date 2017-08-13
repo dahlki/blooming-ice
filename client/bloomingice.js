@@ -25,7 +25,6 @@ window.onload = () => {
   paper.view.onResize = (event) => {
     canvasWidth = paper.view.size.width = canvas.width = (window.innerWidth * .9);
     canvasHeight = paper.view.size.height = canvas.height = (window.innerHeight * .9);
-    console.log(paper.view.size, canvas);
   }
 
   ////// create nodes with animated gradient /////
@@ -47,7 +46,7 @@ window.onload = () => {
   const pathS = new paper.SymbolDefinition(path);
   path.remove();
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 5; i++) {
     const position = (new paper.Point(Math.random() * canvasWidth, Math.random() * canvasHeight));
     const pathI = pathS.place(position);
     nodePositions.push(pathI.position)
@@ -69,6 +68,7 @@ window.onload = () => {
   }
 
   mouse.onMouseDown = (event) => {
+    console.log(event.point);
     hitResult = paper.project.hitTest(event.point, hitOptions);
     if (!hitResult) return;
     if (hitResult.type === "fill") {
@@ -93,7 +93,7 @@ window.onload = () => {
   function play() {
     ////// draw radial lines of cells /////
     for (let i = 0; i < nodePositions.length; i++) {
-      setIntervalOnNode(radialLines, 100, 150, nodePositions[i])
+      setIntervalOnNode(radialLines, 100, 120, nodePositions[i])
     }
 
     let cells = nodePositions.map(nodePos => {

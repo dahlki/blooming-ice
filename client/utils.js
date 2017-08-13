@@ -113,6 +113,7 @@ function setIntervalOnNode(cb, delay, repetitionsOfCb, node) {
       window.clearInterval(intervalFn);
       start = false;
       stopTones();
+      gravity();
     }
   }, delay);
 }
@@ -136,11 +137,29 @@ function radialLines(nodePosition) {
     }
   }
   const startPos = getStartPoint(nodePosition, 30)
-  const endPos = getEndPoint(startPos, 20)
+  const length = (Math.random() * 20) + 10
+  const endPos = getEndPoint(startPos, length)
   const startPoint = new paper.Point(startPos.x, startPos.y)
   const endPoint = new paper.Point(endPos.x, endPos.y)
   const line = new paper.Path.Line(startPoint, endPoint);
+  line.strokeWidth = 2;
   return line.strokeColor = getRandomColor();
+}
+
+function gravity() {
+  const allLines = paper.project.getItems({
+    class: paper.Path
+  })
+  allLines.forEach(line => fall(line))
+
+  function fall(line) {
+    const intervalFn = setInterval(() => {
+      if (line.position.y > (paper.view.size.height * .97)) {
+        clearInterval(intervalFn);
+      }
+      else line.position.y += (line.length);
+    }, 500);
+  }
 }
 
 function startMusic() {
